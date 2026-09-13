@@ -1,0 +1,2 @@
+- [x] Update `ReferralCard.tsx` to change "USDT" to "Pts"
+- [x] Create walkthrough

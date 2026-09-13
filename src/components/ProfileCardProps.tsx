@@ -8,7 +8,7 @@ export default function ProfileCardProps({ user }: UserProfileCardProps) {
   if (!user) {
     return <div className="p-4">No user data available.</div>;
   }
-  const profileImage = 'astronaut.png'; // Replace with actual image path or URL
+  const profileImage = user.user.photoUrl || 'astronaut.png';
 
   return (
     <div className="flex w-full items-center justify-between gap-3 rounded-lg border border-slate-700/40 bg-gray-900 p-3 text-white shadow-lg">
@@ -20,8 +20,8 @@ export default function ProfileCardProps({ user }: UserProfileCardProps) {
         </div>
 
         <div className="flex min-w-0 flex-col items-start">
-          <span className="max-w-full truncate text-h3">{user.Name}</span>
-          <span className="max-w-full truncate text-sm text-gray-400">@{user.username}</span>
+          <span className="max-w-full truncate text-h3">{user.user.fullname}</span>
+          <span className="max-w-full truncate text-sm text-gray-400">@{user.user.username}</span>
         </div>
       </div>
 
@@ -29,10 +29,7 @@ export default function ProfileCardProps({ user }: UserProfileCardProps) {
       <div className="flex shrink-0 flex-col items-end">
         <span className="text-gray-400 text-sm">Balance</span>
         <div className="flex items-center gap-2">
-          <span className="font-bold text-purple-400">${user.balance.toFixed(4)}</span>
-          <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center overflow-hidden">
-            <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="USDT" className="w-5 h-5" />
-          </div>
+          <span className="font-bold text-purple-400">{user.balance} Pts</span>
         </div>
       </div>
     </div>

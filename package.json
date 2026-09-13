@@ -3,14 +3,14 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://mohoshin47.github.io/minitask",
+  "homepage": "https://mohoshin47.github.io/coinboxbot",
   "scripts": {
     "start": "npm run dev",
     "dev": "vite",
     "lint": "eslint .",
     "preview": "vite preview",
-     "build": "tsc -b && vite build",
-    "deploy": "node ./scripts/deploy-https.cjs",
+    "build": "tsc -b && vite build",
+    "deploy": "gh-pages -d dist",
     "deploy:manual": "node ./scripts/deploy-ghpages.js"
   },
   "dependencies": {

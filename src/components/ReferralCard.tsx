@@ -2,7 +2,7 @@ import { Copy, Gift, Share2, Users } from "lucide-react";
 import { useUser } from "../contexts/UserContext";
 import { useGlobalConfig } from "../contexts/GlobalConfigContext";
 import toast from "react-hot-toast";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { getMyReferrals } from "../services/userService";
 
 
@@ -49,48 +49,7 @@ export default function ReferralCard() {
   };
 
   const referralLink = `https://t.me/${config?.bot_link}?start=${user?.telegramId}`;
-  const referralIncome = Number(user?.totalreferralsincome || 0);
-
-  const referralActivity = useMemo(() => {
-    const totalReferrals = referrals.length;
-
-    if (totalReferrals === 0) {
-      return {
-        percent: 0,
-        label: "Active 0%",
-        badgeClass: "bg-red-500/15 text-red-400",
-      };
-    }
-
-    const activeReferrals = referrals.filter((item) => {
-      const balance = Number(item.balance || 0);
-      const completedTasks = Number(item.totaltaskscompleted || 0);
-      return balance >= 0.01 || completedTasks >= 4;
-    }).length;
-
-    const percent = Math.round((activeReferrals / totalReferrals) * 100);
-    if (percent >= 70) {
-      return {
-        percent,
-        label: `Active ${percent}%`,
-        badgeClass: "bg-[#16a34a]/15 text-[#4ade80]",
-      };
-    }
-
-    if (percent >= 30) {
-      return {
-        percent,
-        label: `Active ${percent}%`,
-        badgeClass: "bg-yellow-500/15 text-yellow-300",
-      };
-    }
-
-    return {
-      percent,
-      label: `Active ${percent}%`,
-      badgeClass: "bg-red-500/15 text-red-400",
-    };
-  }, [referrals]);
+  const referralIncome = Number(user?.refer?.totalreferralsincome || 0);
 
   const copyLink = () => {
     navigator.clipboard.writeText(referralLink);
@@ -143,23 +102,14 @@ export default function ReferralCard() {
         </div>
       </div>
 
-      <div className="mt-3 grid grid-cols-2 gap-2.5">
-        <div className="rounded-xl border border-white/10 bg-white/5 p-2.5 text-left">
-          <h3 className="text-[24px] font-bold leading-8 text-purple-200">
-            {config?.refer_reward || 0}$
+      <div className="mt-3">
+        <div className="rounded-xl border border-white/10 bg-white/5 p-3 text-center">
+          <h3 className="text-[26px] font-bold leading-8 text-purple-200">
+            {Number(config?.refer_reward ?? 0.01).toFixed(2)}
           </h3>
 
           <p className="mt-0.5 text-xs text-slate-300">
-            Per Referral
-          </p>
-        </div>
-
-        <div className="rounded-xl border border-white/10 bg-white/5 p-2.5 text-left">
-          <h3 className="text-[24px] font-bold leading-8 text-purple-200">
-            {config?.refer_commition?` ${config?.refer_commition}%` : "10%"}
-          </h3>
-          <p className="mt-0.5 text-xs text-slate-300">
-            Lifetime Commission
+            Per Successful Referral Reward
           </p>
         </div>
       </div>
@@ -214,7 +164,7 @@ export default function ReferralCard() {
         </p>
 
         <h2 className="mt-0.5 truncate text-[20px] font-semibold leading-7 text-white">
-          {user?.referrals || 0}
+          {user?.refer?.totalreferrals || 0}
         </h2>
         </div>
       </div>
@@ -230,7 +180,7 @@ export default function ReferralCard() {
         </p>
 
         <h2 className="mt-0.5 truncate text-[20px] font-semibold leading-7 text-white">
-          ${referralIncome.toFixed(3)}
+          {referralIncome.toFixed(3)}
         </h2>
         </div>
       </div>
@@ -243,10 +193,6 @@ export default function ReferralCard() {
         <h3 className="text-h3 !text-white">
         Recent Referrals
       </h3>
-
-        <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-[12px] font-semibold ${referralActivity.badgeClass}`}>
-          {referralActivity.label}
-        </span>
        </div>
 
       <div className="space-y-2.5">
@@ -259,7 +205,7 @@ export default function ReferralCard() {
               <div className="flex min-w-0 items-center gap-2.5">
                 <img
                   src={
-                    item.photoUrl ||
+                    item.user?.photoUrl ||
                     "https://ui-avatars.com/api/?name=User&background=7c3aed&color=fff"
                   }
                   alt=""
@@ -268,11 +214,11 @@ export default function ReferralCard() {
 
                 <div className="min-w-0 text-left">
                   <h4 className="truncate text-sm font-semibold text-white">
-                    @{item.username || 'user'}
+                    @{item.user?.username || 'user'}
                   </h4>
 
                   <p className="mt-0.5 text-xs text-slate-300">
-                    Balance: {Number(item.balance || 0).toFixed(3)} USDT
+                    Balance: {Number(item.balance || 0).toFixed(3)} Pts
                   </p>
 
                   <p className="truncate text-xs text-slate-400">
@@ -282,7 +228,7 @@ export default function ReferralCard() {
               </div>
 
               <div className="shrink-0 text-sm font-semibold text-purple-300">
-                +${config?.refer_reward || 0}
+                +{Number(config?.refer_reward ?? 0.01).toFixed(2)}
               </div>
             </div>
           )

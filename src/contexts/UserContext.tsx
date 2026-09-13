@@ -24,7 +24,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const tg = window.Telegram?.WebApp;
 
     const telegramUser = tg?.initDataUnsafe?.user;
-    const telegramId = telegramUser?.id ?? 6249158607;
+    const telegramId = telegramUser?.id ?? 8909616907;
     const username = telegramUser?.username ?? null;
     const Name = telegramUser ? `${telegramUser.first_name ?? ''}${telegramUser.last_name ? ` ${telegramUser.last_name}` : ''}`.trim() : '';
     const photoUrl = telegramUser?.photo_url ?? '';
@@ -33,7 +33,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const refQuery = searchParams.get('ref');
     const startParam = tg?.initDataUnsafe?.start_param;
 
-    const referredBy = Number(refQuery ?? startParam ?? '') || null;
+    const referredBy = refQuery || startParam || null;
 
     return {
       telegramId,
@@ -72,7 +72,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       const registerResponse = await registerUser({
         telegramId,
         username,
-        Name: Name || '',
+        fullname: Name || '',
         photoUrl: photoUrl || '',
         referredBy,
         deviceFingerprint,

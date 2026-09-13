@@ -1,7 +1,6 @@
 import Navbar from './components/Navbar';
 import { Toaster } from 'react-hot-toast';
 import Earn from './pages/Earn';
-import Create from './pages/Create';
 import Referral from './pages/Referral';
 import Withdraw from './pages/Withdraw';
 import Profile from './pages/Profile';
@@ -15,8 +14,6 @@ export default function App() {
     switch (activeTab) {
       case 'earn':
         return <Earn />;
-      case 'create':
-        return <Create />;
       case 'referral':
         return <Referral />;
       case 'withdraw':

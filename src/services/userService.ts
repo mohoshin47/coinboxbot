@@ -1,35 +1,40 @@
 import axios from 'axios';
 
-const API_URL = 'https://minitaskapi.onrender.com';
-// const API_URL = 'http://localhost:3000';
-export const getUser = async (telegramId: number) => {
-  const response = await axios.get(`${API_URL}/api/user/getuser/${telegramId}`);
-  return response.data.data;
-};
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_URL = isLocal ? 'http://localhost:3000' : 'https://krybonapi.onrender.com';
+const API_URL_V2 = isLocal ? 'http://localhost:3000' : 'https://krybonapi.onrender.com';
 
-export const applyPromo = async (telegramId: number, code: string) => {
-  const response = await axios.post(`${API_URL}/api/user/apply`, {
-    telegramId,
-    code,
-  });
-  return response.data;
+export const getUser = async (telegramId: number) => {
+  const response = await axios.get(`${API_URL_V2}/api/v2/user/getuser/${telegramId}`);
+  return response.data.data;
 };
 
 export const getGlobalConfig = async () => {
-  const response = await axios.get(`${API_URL}/api/globalconfig`);
+  const response = await axios.get(`${API_URL_V2}/api/v2/user/globalconfig`);
   return response.data.data;
 };
 
-export const getMyReferrals = async (telegramId: number) => {
-  const response = await axios.get(`${API_URL}/api/user/myreferrals/${telegramId}`);
+export const watchAdComplete = async (telegramId: number) => {
+  const response = await axios.post(`${API_URL_V2}/api/v2/user/watch-ad-complete`, { telegramId });
   return response.data;
 };
 
-export const requestWithdraw = async (telegramId: number, amount: number, walletAddress: string) => {
+export const getUserHistory = async (telegramId: number, page: number = 1, limit: number = 20) => {
+  const response = await axios.get(`${API_URL_V2}/api/v2/user/history/${telegramId}?page=${page}&limit=${limit}`);
+  return response.data;
+};
+
+export const getMyReferrals = async (telegramId: number) => {
+  const response = await axios.get(`${API_URL_V2}/api/v2/user/myreferrals/${telegramId}`);
+  return response.data;
+};
+
+export const requestWithdraw = async (telegramId: number, amount: number, walletAddress: string, method: string) => {
   const response = await axios.post(`${API_URL}/api/withdrawal/request`, {
     telegramId,
     amount,
     walletAddress,
+    method,
   });
   return response.data;
 };
@@ -59,41 +64,14 @@ export const claimDailyReward = async (telegramId: number) => {
 export const registerUser = async (payload: {
   telegramId: number;
   username?: string | null;
-  Name?: string;
+  fullname?: string;
   photoUrl?: string;
-  referredBy?: number | null;
+  referredBy?: string | number | null;
   deviceFingerprint?: string | null;
 }) => {
-  const response = await axios.post(`${API_URL}/api/user/register`, payload);
+  const response = await axios.post(`${API_URL_V2}/api/v2/user/register`, payload);
   return response.data;
 };
-
-export async function createTask(data: { type: string; url: string; reward: number; createdBy: number; maxComplete: number }) {
-  const res = await axios.post(`${API_URL}/api/task/create`, data);
-  return res.data;
-}
-
-export async function getCreatedHistory(telegramId: number) {
-  const { data } = await axios.get(
-    `${API_URL}/api/task/created-history/${telegramId}`
-  );
-  return data;
-}
-
-export async function pauseTask(taskId: string, telegramId: number, active: boolean) {
-  const { data } = await axios.patch(`${API_URL}/api/task/pause/${taskId}`, {
-    telegramId,
-    active,
-  });
-  return data;
-}
-
-export async function deleteTask(taskId: string, telegramId: number) {
-  const { data } = await axios.delete(`${API_URL}/api/task/delete/${taskId}`, {
-    data: { telegramId },
-  });
-  return data;
-}
 
 export async function completeTask(taskId: string, telegramId: number) {
   const { data } = await axios.post(`${API_URL}/api/task/complete`, {

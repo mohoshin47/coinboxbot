@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import type { User } from '../types/user';
 import { useGlobalConfig } from '../contexts/GlobalConfigContext';
 import { useUser } from '../contexts/UserContext';
-import { showRewardedPopup } from '../utils/monetagAds';
+import { showRewardedPopup, initAdHandler } from '../utils/monetagAds';
 
 interface DailyRewardProps {
   user?: User;
@@ -32,6 +32,13 @@ const DailyRewardCard: React.FC<DailyRewardProps> = ({
   const lastAdClickedAt = user?.lastAdClickedAt ? new Date(user.lastAdClickedAt) : null;
   const canClaim = !loading && !targetReached && cooldownSeconds === 0 && !cooldownActive && !countryBlocked && taskEnabled;
   const isButtonDisabled = !canClaim;
+
+  // Pre-initialize Ad Handler
+  useEffect(() => {
+    if (config?.adSettings?.MonetagZoneId) {
+      initAdHandler(config.adSettings.MonetagZoneId);
+    }
+  }, [config?.adSettings?.MonetagZoneId]);
 
   const getInitialCooldownSeconds = () => {
     if (lastAdClickedAt && breakTimeMinutes > 0) {
@@ -112,7 +119,7 @@ const DailyRewardCard: React.FC<DailyRewardProps> = ({
             <h4 className="max-w-full truncate text-h3 text-white">Daily Task</h4>
             <div className="flex max-w-full items-center gap-1.5 text-sm">
               <span className="text-gray-300">Reward : </span>
-              <span className="text-purple-400 font-bold">${rewardAmount.toFixed(3)}</span>
+              <span className="text-purple-400 font-bold">{rewardAmount} Pts</span>
             </div>
           </div>
         </div>

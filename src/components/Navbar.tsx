@@ -1,6 +1,5 @@
 import {
   Zap,
-  Plus,
   Users,
   Wallet,
   User,
@@ -22,11 +21,6 @@ export default function Navbar({
       label: "Earn",
     },
     {
-      id: "create",
-      icon: <Plus size={20} />,
-      label: "Create",
-    },
-    {
       id: "referral",
       icon: <Users size={20} />,
       label: "Referral",
@@ -46,7 +40,7 @@ export default function Navbar({
   return (
     <div className="fixed bottom-0 left-1/2 w-full max-w-[720px] -translate-x-1/2 border-t border-gray-700 bg-[#081425]">
       
-      <div className="grid grid-cols-5 px-1 py-2.5">
+      <div className="grid grid-cols-4 px-1 py-2.5">
         {navItems.map((item) => (
           <button
             key={item.id}

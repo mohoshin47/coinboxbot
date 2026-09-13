@@ -105,7 +105,7 @@ export default function TaskCard({ task, onReload, onOpenVerification }: Props) 
       </div>
 
       <div className="flex w-[86px] shrink-0 flex-col items-end gap-1">
-        <span className="max-w-full truncate text-sm font-bold text-violet-400">${task.reward.toFixed(3)}</span>
+        <span className="max-w-full truncate text-sm font-bold text-violet-400">{task.reward} Pts</span>
 
         <button
           onClick={handleStart}

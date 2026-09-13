@@ -25,3 +25,4 @@ Never remove or replace requested features.
 - Smooth animations and micro-interactions
 - Responsive on all devices
 - Simple and user-friendly navigation
+- make sure all code are more simple reusedable and heuman readable, and easy to read .

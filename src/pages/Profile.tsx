@@ -8,36 +8,25 @@ import {
   Medal,
   ShieldCheck,
   Sparkles,
-  TicketPercent,
   Users,
   Wallet,
+  Headphones,
 } from "lucide-react";
-import { useState } from "react";
 import { useUser } from "../contexts/UserContext";
-import { applyPromo } from "../services/userService";
+import { useGlobalConfig } from "../contexts/GlobalConfigContext";
 import toast from "react-hot-toast";
 
 const DEFAULT_PROFILE_PHOTO = `${import.meta.env.BASE_URL}astronaut.png`;
 
-function getErrorMessage(error: unknown) {
-  const apiError = error as {
-    response?: { data?: { message?: string } };
-    message?: string;
-  };
-
-  return apiError.response?.data?.message || apiError.message || "Something went wrong";
-}
-
 export default function Profile() {
-  const { user, setUser } = useUser();
-  const [loading, setLoading] = useState(false);
-  const [promoCode, setPromoCode] = useState("");
+  const { user } = useUser();
+  const { config } = useGlobalConfig();
 
   const balance = Number(user?.balance || 0);
   const adCredit = Number(user?.adcredit || 0);
-  const referralIncome = Number(user?.totalreferralsincome || 0);
+  const referralIncome = Number(user?.refer?.totalreferralsincome || 0);
   const status = user?.accountStatus || "inactive";
- const isVipEligible = user?.vipuser === true || user?.totalAdsClicked >= 5 || user?.totalAdsShow >= 10;
+ const isVipEligible = user?.vipuser === true || (user?.totalAdsClicked || 0) >= 5 || (user?.totalAdsShow || 0) >= 10;
   const statusClass =
     status === "active"
       ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
@@ -57,35 +46,11 @@ export default function Profile() {
     window.open("https://telegram.me/+bKWFJI1xgwZhMGM1", "_blank", "noopener,noreferrer");
   };
 
-  const applyPromo2 = async () => {
-    if (!promoCode.trim()) {
-      toast.error("Please enter a promo code", {
-        duration: 2000,
-        position: "top-center",
-      });
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const result = await applyPromo(user?.telegramId || 0, promoCode.trim());
-
-      toast.success(result.message, {
-        duration: 2000,
-        position: "top-center",
-      });
-      setUser({
-        ...user,
-        balance: result.balance,
-      });
-      setPromoCode("");
-    } catch (error) {
-      toast.error(getErrorMessage(error), {
-        duration: 2000,
-        position: "top-center",
-      });
-    } finally {
-      setLoading(false);
+  const handleSupportAccess = () => {
+    if (config?.supportchannel) {
+      window.open(config.supportchannel, "_blank", "noopener,noreferrer");
+    } else {
+      toast.error("Support channel is not configured yet.");
     }
   };
 
@@ -98,19 +63,19 @@ export default function Profile() {
     },
     {
       label: "Referrals",
-      value: user?.referrals || 0,
+      value: user?.refer?.totalreferrals || 0,
       icon: Users,
       accent: "text-violet-300",
     },
     {
       label: "Referral Income",
-      value: `$${referralIncome.toFixed(3)}`,
+      value: `${referralIncome} Pts`,
       icon: Gift,
       accent: "text-emerald-300",
     },
     {
       label: "Ad Credit",
-      value: `$${adCredit.toFixed(3)}`,
+      value: `${adCredit} Pts`,
       icon: Wallet,
       accent: "text-amber-300",
     },
@@ -126,7 +91,7 @@ export default function Profile() {
               <div className="flex min-w-0 items-center gap-2.5">
                 <div className="relative h-14 w-14 shrink-0 rounded-2xl border border-white/10 bg-slate-900 p-1 shadow-lg sm:h-16 sm:w-16">
                   <img
-                    src={user?.photoUrl || DEFAULT_PROFILE_PHOTO}
+                    src={user?.user?.photoUrl || DEFAULT_PROFILE_PHOTO}
                     alt="Profile"
                     className="h-full w-full rounded-xl object-cover"
                     onError={(event) => {
@@ -142,10 +107,10 @@ export default function Profile() {
 
                 <div className="min-w-0 text-left">
                   <h2 className="truncate text-[20px] font-semibold leading-7 text-white sm:text-h2">
-                    {user?.Name || "Mini Task User"}
+                    {user?.user?.fullname || "Mini Task User"}
                   </h2>
                   <p className="truncate text-[13px] text-slate-400">
-                    @{user?.username || "unknown"}
+                    @{user?.user?.username || "unknown"}
                   </p>
                   <span
                     className={`mt-1.5 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold capitalize ${statusClass}`}
@@ -161,7 +126,7 @@ export default function Profile() {
                 <div className="text-left">
                   <p className="text-[13px] text-cyan-100/70">Available Balance</p>
                   <h1 className="mt-0.5 text-[28px] font-bold leading-9 text-white">
-                    ${balance.toFixed(3)}
+                    {balance} Pts
                   </h1>
                 </div>
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-cyan-400/15">
@@ -218,27 +183,22 @@ export default function Profile() {
         </section>
 
         <section className="mt-3 rounded-2xl border border-slate-800 bg-[#07111F] p-3 sm:p-4">
-          <div className="mb-2.5 flex items-center gap-2">
-            <TicketPercent size={19} className="text-violet-300" />
-            <h3 className="text-h3 !text-white">Promo Code</h3>
-          </div>
-
-          <div className="flex w-full items-center gap-2">
-            <input
-              type="text"
-              placeholder="Enter promo code"
-              value={promoCode}
-              onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-              className="h-10 min-w-0 flex-1 rounded-xl border border-slate-800 bg-[#0B1728] px-3 text-sm font-semibold uppercase tracking-wide text-white placeholder:font-normal placeholder:normal-case placeholder:tracking-normal placeholder:text-slate-500 outline-none focus:border-violet-500"
-            />
-
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-2.5 text-left">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-500/10 text-violet-400">
+                <Headphones size={20} />
+              </div>
+              <div className="min-w-0">
+                <h3 className="truncate text-sm font-semibold text-white">Need Help?</h3>
+                <p className="truncate text-xs text-slate-400">Join our support channel</p>
+              </div>
+            </div>
             <button
               type="button"
-              onClick={applyPromo2}
-              disabled={loading}
-              className="h-10 w-20 shrink-0 rounded-xl bg-gradient-to-r from-violet-600 to-purple-500 text-sm font-semibold text-white shadow-lg shadow-purple-950/30 active:scale-95 disabled:opacity-50 sm:w-24"
+              onClick={handleSupportAccess}
+              className="shrink-0 whitespace-nowrap rounded-xl bg-gradient-to-r from-violet-600 to-purple-500 px-4 py-2 text-xs font-bold text-white shadow-lg active:scale-95"
             >
-              {loading ? "..." : "Apply"}
+              Contact Support
             </button>
           </div>
         </section>

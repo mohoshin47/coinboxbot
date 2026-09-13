@@ -6,8 +6,8 @@ const fs = require('fs');
 
 try {
   const distDir = path.join(__dirname, '..', 'dist');
-  const gitCacheDir = path.join(require('os').tmpdir(), 'gh-pages-minitask');
-  const repoUrl = 'https://github.com/mohoshin47/minitask.git';
+  const gitCacheDir = path.join(require('os').tmpdir(), 'gh-pages-coinboxbot');
+  const repoUrl = 'https://github.com/mohoshin47/coinboxbot.git';
   const branch = 'gh-pages';
 
   console.log('Starting deployment...');
