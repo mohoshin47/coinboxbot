@@ -12,7 +12,6 @@ export default function Withdraw() {
   const { user, setUser } = useUser();
   const { config } = useGlobalConfig();
   const [amount, setAmount] = useState('');
-  const balance = user?.balance || 0;
 
   const [walletAddress, setWalletAddress] = useState('');
   const [loading, setLoading] = useState(false);
@@ -248,17 +247,6 @@ export default function Withdraw() {
                     placeholder="Enter point amount"
                     className="min-w-0 w-full bg-transparent text-sm font-bold text-white placeholder:text-slate-600 outline-none"
                   />
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAmount(balance.toString());
-                      setMessageBox({ type: 'default', text: defaultWarning });
-                    }}
-                    className="ml-2 inline-flex items-center rounded-lg px-3 py-1.5 bg-cyan-500/5 text-xs font-bold text-cyan-400 hover:bg-cyan-500/10 transition-colors"
-                  >
-                    MAX
-                  </button>
                 </div>
               </div>
             </div>

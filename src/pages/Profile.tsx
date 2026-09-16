@@ -57,7 +57,7 @@ export default function Profile() {
   const stats = [
     {
       label: "Tasks Completed",
-      value: user?.totaltaskscompleted || 0,
+      value: user?.adStats?.totalcount || 0,
       icon: Medal,
       accent: "text-cyan-300",
     },

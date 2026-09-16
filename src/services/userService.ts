@@ -90,7 +90,7 @@ export interface CheckCountryResponse {
 
 export async function checkCountry() {
   const { data } = await axios.get<CheckCountryResponse>(
-    `${API_URL}/api/user/checkcountry`
+    `${API_URL_V2}/api/v2/globalconfig/checkcountry`
   );
   return data;
 }
